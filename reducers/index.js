@@ -1,40 +1,27 @@
-const initialState = {
-  user: { isLoggedIn: false, user: null, signUpData: {}, loginData: {} },
-  post: {
-    mainPosts: [],
-  },
-};
+//redux ssr -Hydrate
+import { HYDRATE } from "next-redux-wrapper";
+import { combineReducers } from "redux";
+import user from "./user";
+import post from "./post";
+
 
 //action creator(data 동적으로 받아서 action 만들어낼 수 있는 생성기!)
-export const loginAction = (data) => {
-  return { type: "LOG_IN", data };
-};
-export const logoutAction = (data) => {
-  return { type: "LOG_OUT", data };
-};
 
 // Reducer? "(이전상태, 액션) => 다음 상태" 를 만드는 아이
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "LOG_IN":
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          isLoggedIn: true,
-          user: action.data,
-        },
-      };
-    case "LOG_OUT":
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          isLoggedIn: false,
-          user: null,
-        },
-      };
-  }
-};
+const rootReducer = combineReducers({
+  // HYDRATE용 index 추가!!
+  index: (state = {}, action) => {
+    switch (action.type) {
+      case "HYDRATE":
+        console.log("HYDRATE", action);
+        return { ...state, ...action.payload };
+      default:
+        return state;
+    }
+  },
+  //원래 combineReducers는 아래 함수들만 가지고 와서 심플함
+  user,
+  post,
+});
 
 export default rootReducer;

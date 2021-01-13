@@ -4,14 +4,15 @@ import { Menu, Input, Button, Row, Col } from "antd";
 import PropTypes from "prop-types";
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 
 const AppLayout = ({ children }) => {
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const { isLoggedIn } = useSelector((state) => state.user);
 
   return (
-    <div>
+    <>
+      <Global />
       <Menu mode="horizontal">
         <Menu.Item key="home">
           <Link href="/">
@@ -55,7 +56,7 @@ const AppLayout = ({ children }) => {
           </a>
         </Col>
       </Row>
-    </div>
+    </>
   );
 };
 AppLayout.propTypes = {
@@ -65,5 +66,15 @@ AppLayout.propTypes = {
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
-
+const Global = createGlobalStyle`
+.ant-row{
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+.ant-col:first-child{
+  padding-left: 0 !important;
+}
+.ant-col:last-child{
+  padding-right: 0 !important;
+}`;
 export default AppLayout;

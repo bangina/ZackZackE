@@ -3,7 +3,7 @@ import { Button, Form, Input } from "antd";
 import Link from "next/link";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../reducers/index";
+import { loginAction } from "../reducers/user";
 
 const LoginForm = () => {
   const [id, setId] = useState("");
