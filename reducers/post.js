@@ -51,15 +51,41 @@ export const initialState = {
     },
   ],
   imagePaths: [], //이미지 업로드 경로
-  postAdded: false, //게시글 추가 완료 여부
+  isPostAdding: false, //게시글 추가 로딩
+  isPostAdded: false, //게시글 추가 완료 여부
+  postAddError: null,
+  isCommentAdding: false, //게시글 추가 로딩
+  isCommentAdded: false, //게시글 추가 완료 여부
+  commnetAddError: null,
 };
 
-const ADD_POST = "ADD_POST";
-export const addPost = {
-  type: ADD_POST,
-};
+export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
+export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
+export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
+
+export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
+export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
+export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
+
+//동적 액션 creator
+export const addPost = (data) => ({
+  type: ADD_POST_REQUEST,
+  data,
+});
+export const addComment = (data) => ({
+  type: ADD_COMMENT_REQUEST,
+  data,
+});
+
 const dummyPost = {
-  id: 1,
+  id: 2,
+  User: { id: 1, nickname: "인아" },
+  content: "",
+  Images: [],
+  Comments: [],
+};
+const dummyComment = {
+  id: 2,
   User: { id: 1, nickname: "인아" },
   content: "",
   Images: [],
@@ -68,12 +94,51 @@ const dummyPost = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_POST:
+    case ADD_POST_REQUEST:
+      return {
+        ...state,
+        isPostAdding: true,
+        isPostAdded: false,
+        postAddError: null,
+      };
+    case ADD_POST_SUCCESS:
       return {
         ...state,
         //dummyPost를 spread 앞에다가 추가해야 위에 올라간다!!
         mainPosts: [dummyPost, ...state.mainPosts],
-        postAdded: true,
+        isPostAdded: true,
+        isPostAdding: false,
+        postAddError: null,
+      };
+    case ADD_POST_FAILURE:
+      return {
+        ...state,
+        isPostAdded: false,
+        isPostAdding: false,
+        postAddError: action.error,
+      };
+    case ADD_COMMENT_REQUEST:
+      return {
+        ...state,
+        isCommentAdding: true,
+        isCommentAdded: false,
+        commnetAddError: null,
+      };
+    case ADD_COMMENT_SUCCESS:
+      return {
+        ...state,
+        //dummyPost를 spread 앞에다가 추가해야 위에 올라간다!!
+        // mainPosts: [dummyComment, ...state.mainPosts],
+        isCommentAdded: true,
+        commnetAddErroring: false,
+        postAddError: null,
+      };
+    case ADD_COMMENT_FAILURE:
+      return {
+        ...state,
+        isCommentAdded: false,
+        commnetAddErroring: false,
+        postAddError: action.error,
       };
 
     default:

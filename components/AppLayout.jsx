@@ -8,7 +8,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 
 const AppLayout = ({ children }) => {
-  const { isLoggedIn } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
 
   return (
     <>
@@ -41,7 +41,8 @@ const AppLayout = ({ children }) => {
       <Row gutter={8}>
         {/* n/24 */}
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {/* 내 정보가 있으면(loggedIn과 같음) */}
+          {me ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

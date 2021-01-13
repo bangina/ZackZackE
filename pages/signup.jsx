@@ -5,10 +5,15 @@ import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
+import { SIGNUP_REQUEST } from "../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
 
 const Signup = () => {
+  const dispatch = useDispatch();
+  const { isSigningUp } = useSelector((state) => state.user);
+
   // const [input, setInput] = useState('');
-  const [id, onChangeId] = useInput("");
+  const [email, onChangeEmail] = useInput("");
   const [pw, onChangePw] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
 
@@ -36,7 +41,11 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    console.log(id, pw, nickname);
+    console.log(email, pw, nickname);
+    dispatch({
+      type: SIGNUP_REQUEST,
+      data: { email, pw, nickname },
+    });
   }, []);
 
   return (
@@ -46,15 +55,21 @@ const Signup = () => {
       </Head>
       <Form onFinish={onSubmit}>
         <div>
-          <label htmlFor="user-id">ID</label>
-          <br />
-          <Input name="user-id" value={id} onChange={onChangeId} required />
-        </div>
-        <div>
-          <label htmlFor="user-id">Nickname</label>
+          <label htmlFor="user-email">Email</label>
           <br />
           <Input
-            name="user-id"
+            name="user-email"
+            value={email}
+            onChange={onChangeEmail}
+            required
+            type="email"
+          />
+        </div>
+        <div>
+          <label htmlFor="user-nickname">Nickname</label>
+          <br />
+          <Input
+            name="user-nickname"
             value={nickname}
             onChange={onChangeNickname}
             required
@@ -92,7 +107,7 @@ const Signup = () => {
           {termError && <ErrorMessage>약관에 동의해주세요.</ErrorMessage>}
         </div>
         <div>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isSigningUp}>
             Submit
           </Button>
         </div>

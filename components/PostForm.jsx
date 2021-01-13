@@ -1,26 +1,32 @@
 import { Button, Input } from "antd";
 import Form from "antd/lib/form/Form";
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import useInput from "../hooks/useInput";
 import { addPost } from "../reducers/post";
 
 const PostForm = () => {
-  const { imagePaths } = useSelector((state) => state.post);
+  const { imagePaths, isPostAdded } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  const [text, setText] = useState();
+  const [text, onChangeText, setText] = useInput();
   const imageInput = useRef();
 
-  const onChangeText = useCallback((e) => {
-    setText(e.target.value);
-  });
   const onSubmit = () => {
-    dispatch(addPost);
+    dispatch(addPost());
   };
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
-    setText("");
-  },[]);
+  }, [text]);
 
+  useEffect(() => {
+    // onSubmit에서 dispatch랑 같이 text초기화 해주면 안 됨!!
+    // WHAT IF 서버에서 요청 받았는데 문제 생겨서 처리가 안 되면??
+    // 아직 텍스트 초기화 시키면 안 되지~~
+    // isPostAdded됐을 때 초기화 한다!
+    if (isPostAdded) {
+      setText("");
+    }
+  }, [isPostAdded]);
   return (
     <Form
       style={{ margin: "10px 0 20px" }}
