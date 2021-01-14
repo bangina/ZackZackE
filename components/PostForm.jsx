@@ -3,17 +3,17 @@ import Form from "antd/lib/form/Form";
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import useInput from "../hooks/useInput";
-import { addPost } from "../reducers/post";
+import { ADD_POST_REQUEST } from "../reducers/post";
 
 const PostForm = () => {
   const { imagePaths, isPostAdded } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-  const [text, onChangeText, setText] = useInput();
+  const [text, onChangeText, setText] = useInput("");
   const imageInput = useRef();
 
-  const onSubmit = () => {
-    dispatch(addPost());
-  };
+  const onSubmitForm = useCallback(() => {
+    dispatch({ type: ADD_POST_REQUEST, data: text });
+  }, [text]);
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [text]);
@@ -31,7 +31,7 @@ const PostForm = () => {
     <Form
       style={{ margin: "10px 0 20px" }}
       encType="multipart/form-data"
-      onFinish={onSubmit}
+      onFinish={onSubmitForm}
     >
       <Input.TextArea
         value={text}

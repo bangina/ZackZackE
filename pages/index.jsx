@@ -6,7 +6,7 @@ import PostForm from "../components/PostForm";
 import PostCard from "../components/PostCard";
 
 const Home = () => {
-  const { isLoggedIn } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const { mainPosts } = useSelector((state) => state.post);
 
   return (
@@ -14,7 +14,7 @@ const Home = () => {
       <Head>
         <title>NodeBird</title>
       </Head>
-      {isLoggedIn && <PostForm />}
+      {me && <PostForm />}
       {/* map구문에서 index를 key로 쓰는 것은 안티패턴 중 하나 */}
       {mainPosts.map((post) => (
         <PostCard key={post.id} post={post} />

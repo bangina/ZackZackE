@@ -12,7 +12,7 @@ const LoginForm = () => {
 
   const dispatch = useDispatch();
 
-  const { isLoggingIn } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
 
   const onSubmitForm = useCallback(() => {
     // e.preventDefault() : antd에는 onFinish 속성 자체에 내장되어있음
@@ -49,7 +49,7 @@ const LoginForm = () => {
       {/* thus, 리렌더링시마다 객체 계속 생성(성능에 좋지 않은 영향) */}
       {/* ===> styled-component 사용한다  */}
       <ButtonWrapper>
-        <Button type="primary" htmlType="submit" loading={isLoggingIn}>
+        <Button type="primary" htmlType="submit" loading={me}>
           Log In
         </Button>
         <Link href="/signup">

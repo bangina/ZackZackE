@@ -20,12 +20,12 @@ const UserProfile = () => {
         </div>,
         <div key="following">
           팔로잉
-          <br /> {me.followings.length}
+          <br /> {me.Followings.length}
         </div>,
         <div key="follower">
           팔로워
           <br />
-          {me.followers.length}
+          {me.Followers.length}
         </div>,
       ]}
     >

@@ -42,10 +42,10 @@ const dummyUser = (data) => ({
   Followers: [],
 });
 export const loginRequestAction = (data) => {
-  return { type: "LOG_IN", data };
+  return { type: LOG_IN_REQUEST, data };
 };
 export const logoutRequestAction = (data) => {
-  return { type: "LOG_OUT", data };
+  return { type: LOG_OUT_REQUEST, data };
 };
 
 const reducer = (state = initialState, action) => {

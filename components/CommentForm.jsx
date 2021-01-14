@@ -8,14 +8,16 @@ import { ADD_COMMENT_REQUEST } from "../reducers/post";
 import { useDispatch } from "react-redux";
 
 const CommentForm = ({ post }) => {
-  const { id, isCommentAdded } = useSelector((state) => state.state);
+  const { id, isCommentAdded, isCommentAdding } = useSelector(
+    (state) => state.post
+  );
   const [commentText, onChangeCommentText, setCommentText] = useInput("");
   const dispatch = useDispatch();
   const onSubmitComment = useCallback(() => {
     console.log(post.id, commentText);
     dispatch({
       type: ADD_COMMENT_REQUEST,
-      data: { content: commentText, postId: post.id, id },
+      data: { content: commentText, postId: post.id, userId: id },
     });
   }, [commentText, id]);
 
@@ -34,9 +36,10 @@ const CommentForm = ({ post }) => {
           style={{ position: "relative", margin: 0 }}
         />
         <Button
-          style={{ position: "absolute", right: 0, bottom: -40 }}
+          style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
           type="primary"
           htmlType="submit"
+          loading={isCommentAdding}
         >
           삐약
         </Button>

@@ -68,7 +68,6 @@ const PostCard = ({ post }) => {
         <Card.Meta
           title={post.User.nickname}
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-          //   description={post.content}
           description={<PostCardContent postData={post.content} />}
         />
       </Card>

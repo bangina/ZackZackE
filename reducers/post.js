@@ -1,3 +1,5 @@
+import shortId from "shortid";
+
 export const initialState = {
   mainPosts: [
     //   대문자 : DB sequalizer에서 관계있는 정보들 합쳐서 오는 것들은 대문자로 넘어옴
@@ -54,9 +56,9 @@ export const initialState = {
   isPostAdding: false, //게시글 추가 로딩
   isPostAdded: false, //게시글 추가 완료 여부
   postAddError: null,
-  isCommentAdding: false, //게시글 추가 로딩
+  isCommentAdding: false, //게시글 추가  로딩
   isCommentAdded: false, //게시글 추가 완료 여부
-  commnetAddError: null,
+  commentAddError: null,
 };
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
@@ -77,20 +79,19 @@ export const addComment = (data) => ({
   data,
 });
 
-const dummyPost = {
-  id: 2,
+const dummyPost = (data) => ({
+  id: shortId.generate(), //더미 데이터 ID 겹치지 않도록!
+  content: data,
   User: { id: 1, nickname: "인아" },
-  content: "",
   Images: [],
   Comments: [],
-};
-const dummyComment = {
-  id: 2,
+});
+
+const dummyComment = (data) => ({
+  id: shortId.generate(),
+  content: data,
   User: { id: 1, nickname: "인아" },
-  content: "",
-  Images: [],
-  Comments: [],
-};
+});
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -105,7 +106,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         //dummyPost를 spread 앞에다가 추가해야 위에 올라간다!!
-        mainPosts: [dummyPost, ...state.mainPosts],
+        mainPosts: [dummyPost(action.data), ...state.mainPosts],
         isPostAdded: true,
         isPostAdding: false,
         postAddError: null,
@@ -122,23 +123,37 @@ const reducer = (state = initialState, action) => {
         ...state,
         isCommentAdding: true,
         isCommentAdded: false,
-        commnetAddError: null,
+        commentAddError: null,
       };
-    case ADD_COMMENT_SUCCESS:
+    case ADD_COMMENT_SUCCESS: {
+      //불변성을 지키며 comment 추가하기!!!!!!!!
+      //(기존 객체들의 "참조는 유지"하되, 새로 추가되는 애만 생성하는 것)
+      //1. comment의 부모 post의 id를 알아낸다
+      const postIndex = state.mainPosts.findIndex(
+        (p) => p.id === action.data.postId
+      );
+      //2. 알아낸 id로 해당 post 데려온다.
+      const post = state.mainPosts[postIndex];
+      //3. dummyComment와 해당 post의 댓글들을 얕은 복사하여 합쳐서 저장한다.
+      const Comments = [dummyComment(action.data.content), ...post.Comments];
+      //4. mainPost 얕은 복사
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Comments };
+
       return {
         ...state,
-        //dummyPost를 spread 앞에다가 추가해야 위에 올라간다!!
-        // mainPosts: [dummyComment, ...state.mainPosts],
+        mainPosts,
         isCommentAdded: true,
-        commnetAddErroring: false,
-        postAddError: null,
+        isCommentAdding: false,
+        commentAddError: null,
       };
+    }
     case ADD_COMMENT_FAILURE:
       return {
         ...state,
         isCommentAdded: false,
-        commnetAddErroring: false,
-        postAddError: action.error,
+        isCommentAdding: false,
+        commentAddError: action.error,
       };
 
     default:

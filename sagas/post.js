@@ -1,4 +1,4 @@
-import { all, fork, call, put, takeLatest } from "redux-saga/effects";
+import { all, fork, call, put, takeLatest, delay } from "redux-saga/effects";
 import axios from "axios";
 import {
   ADD_COMMENT_FAILURE,
@@ -10,20 +10,21 @@ import {
 } from "../reducers/post";
 
 //3. addPost에서 실행된 결과값인 action,data가 addPostAPI의 매개변수로 전달된다
-function addPostAPI(data) {
-  return axios.post(`/api/post/${data.postId}`, data);
-}
-function addCommentAPI(data) {
-  return axios.post(`/api/post/${data.postId}/comment`, data);
-}
+// function addPostAPI(data) {
+//   return axios.post(`/api/post/${data.postId}`, data);
+// }
+// function addCommentAPI(data) {
+//   return axios.post(`/api/post/${data.postId}/comment`, data);
+// }
 
 function* addPost(action) {
+  console.log("addPost fired(saga)");
   try {
-    const result = yield call(addPostAPI, action.data);
-
+    // const result = yield call(addPostAPI, action.data);
+    yield delay(1000);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: result.data,
+      data: action.data,
     });
   } catch (err) {
     yield put({
@@ -35,11 +36,11 @@ function* addPost(action) {
 
 function* addComment(action) {
   try {
-    const result = yield call(addCommentAPI, action.data);
-
+    // const result = yield call(addCommentAPI, action.data);
+    yield delay(1000);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: result.data,
+      data: action.data,
     });
   } catch (err) {
     yield put({
