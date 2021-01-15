@@ -4,23 +4,27 @@ export const initialState = {
   mainPosts: [
     //   대문자 : DB sequalizer에서 관계있는 정보들 합쳐서 오는 것들은 대문자로 넘어옴
     {
-      id: 1,
+      id: shortId.generate(),
       User: { id: 1, nickname: "인아" },
       content: "히히",
       Images: [
-        { src: "https://dummyimage.com/300" },
-        { src: "https://dummyimage.com/300" },
-        { src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
       ],
       Comments: [
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: "nero",
           },
           content: "#리액트 #쉬워요",
         },
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: "hero",
           },
           content: "호호호",
@@ -28,23 +32,27 @@ export const initialState = {
       ],
     },
     {
-      id: 2,
-      User: { id: 1, nickname: "인아" },
+      id: shortId.generate(),
+      User: { id: shortId.generate(), nickname: "인아" },
       content: "#리액트 #쉬워요",
       Images: [
-        { src: "https://dummyimage.com/300" },
-        { src: "https://dummyimage.com/300" },
-        { src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
+        { id: shortId.generate(), src: "https://dummyimage.com/300" },
       ],
       Comments: [
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: "nero",
           },
           content: "#리액트 #쉬워요",
         },
         {
+          id: shortId.generate(),
           User: {
+            id: shortId.generate(),
             nickname: "hero",
           },
           content: "호호호",
@@ -59,11 +67,18 @@ export const initialState = {
   isCommentAdding: false, //게시글 추가  로딩
   isCommentAdded: false, //게시글 추가 완료 여부
   commentAddError: null,
+  isPostRemoving: false,
+  isPostRemoved: false,
+  postRemoveError: null,
 };
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
+
+export const REMOVE_POST_REQUEST = "REMOVE_POST_REQUEST";
+export const REMOVE_POST_SUCCESS = "REMOVE_POST_SUCCESS";
+export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 
 export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
@@ -72,6 +87,10 @@ export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
 //동적 액션 creator
 export const addPost = (data) => ({
   type: ADD_POST_REQUEST,
+  data, //text
+});
+export const removePost = (data) => ({
+  type: REMOVE_POST_REQUEST,
   data,
 });
 export const addComment = (data) => ({
@@ -80,8 +99,8 @@ export const addComment = (data) => ({
 });
 
 const dummyPost = (data) => ({
-  id: shortId.generate(), //더미 데이터 ID 겹치지 않도록!
-  content: data,
+  id: data.id,
+  content: data.content,
   User: { id: 1, nickname: "인아" },
   Images: [],
   Comments: [],
@@ -117,6 +136,28 @@ const reducer = (state = initialState, action) => {
         isPostAdded: false,
         isPostAdding: false,
         postAddError: action.error,
+      };
+    case REMOVE_POST_REQUEST:
+      return {
+        ...state,
+        isPostRemoving: true,
+        isPostRemoved: false,
+        postRemoveError: null,
+      };
+    case REMOVE_POST_SUCCESS:
+      return {
+        ...state,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        isPostRemoved: true,
+        isPostRemoving: false,
+        postRemoveError: null,
+      };
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        isPostRemoved: false,
+        isPostRemoving: false,
+        postRemoveError: action.error,
       };
     case ADD_COMMENT_REQUEST:
       return {

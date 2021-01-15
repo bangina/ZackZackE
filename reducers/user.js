@@ -33,12 +33,20 @@ export const UNFOLLOW_REQUEST = "UNFOLLOW_REQUEST";
 export const UNFOLLOW_SUCCESS = "UNFOLLOW_SUCCESS";
 export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 
+//게시글 생성시 user(me)에게도 추가
+export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
+export const REMOVE_POST_TO_ME = "REMOVE_POST_TO_ME";
+
 const dummyUser = (data) => ({
-  ...data,
-  nickname: "ina",
+  // ...data,
+  nickname: "인아",
   id: 1,
-  Posts: [],
-  Followings: [],
+  Posts: [{ id: 1 }],
+  Followings: [
+    { nickname: "chocho" },
+    { nickname: "chocho2" },
+    { nickname: "chocho3" },
+  ],
   Followers: [],
 });
 export const loginRequestAction = (data) => {
@@ -110,6 +118,24 @@ const reducer = (state = initialState, action) => {
         ...state,
         isSigningUp: false,
         signupError: action.error,
+      };
+    case ADD_POST_TO_ME:
+      return {
+        ...state,
+        me: {
+          // 불변성 지키기 어렵군요
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me.Posts],
+        },
+      };
+    case REMOVE_POST_TO_ME:
+      return {
+        ...state,
+        me: {
+          //지우는건 필터링으로!
+          ...state.me,
+          Posts: state.me.Posts.filter((v) => v.id !== action.data),
+        },
       };
 
     default:
