@@ -1,3 +1,5 @@
+import produce from "immer";
+
 export const initialState = {
   isLoggedIn: false,
   isLoggingIn: false, //request 보낸 상태(LOADING...)
@@ -57,89 +59,76 @@ export const logoutRequestAction = (data) => {
 };
 
 const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case LOG_IN_REQUEST:
-      return {
-        ...state,
-        isLoggingIn: true,
-        isLoggedIn: false,
-        loginError: null, //로딩중일 때 에러를 초기화해준다
-      };
-    case LOG_IN_SUCCESS:
-      return {
-        ...state,
-        isLoggedIn: true,
-        isLoggingIn: false,
-        me: dummyUser(action.data),
-      };
-    case LOG_IN_FAILURE:
-      return {
-        ...state,
-        isLoggedIn: false,
-        isLoggingIn: false,
-      };
-    case LOG_OUT_REQUEST:
-      return {
-        ...state,
-        isLoggedOut: false,
-        isLoggingOut: true, //requesting...
-        logoutError: null,
-        me: null,
-      };
-    case LOG_OUT_SUCCESS:
-      return {
-        ...state,
-        isLoggedOut: false,
-        isLoggingOut: false,
-        me: null,
-      };
-    case LOG_OUT_FAILURE:
-      return {
-        ...state,
-        isLoggingOut: false,
-        logoutError: action.error,
-      };
-    case SIGNUP_REQUEST:
-      return {
-        ...state,
-        isSignedUp: false,
-        isSigningUp: true, //requesting...
-        signupError: null,
-      };
-    case SIGNUP_SUCCESS:
-      return {
-        ...state,
-        isSignedUp: false,
-        isSigningUp: false,
-        // signUpData: action.data,
-      };
-    case SIGNUP_FAILURE:
-      return {
-        ...state,
-        isSigningUp: false,
-        signupError: action.error,
-      };
-    case ADD_POST_TO_ME:
-      return {
-        ...state,
-        me: {
-          // 불변성 지키기 어렵군요
-          ...state.me,
-          Posts: [{ id: action.data }, ...state.me.Posts],
-        },
-      };
-    case REMOVE_POST_TO_ME:
-      return {
-        ...state,
-        me: {
-          //지우는건 필터링으로!
-          ...state.me,
-          Posts: state.me.Posts.filter((v) => v.id !== action.data),
-        },
-      };
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case LOG_IN_REQUEST:
+        draft.isLoggingIn = true;
+        draft.isLoggedIn = false;
+        draft.loginError = null; //로딩중일 때 에러를 초기화해준다
+        break;
 
-    default:
-      return state;
-  }
+      case LOG_IN_SUCCESS:
+        draft.isLoggedIn = true;
+        draft.isLoggingIn = false;
+        draft.me = dummyUser(action.data);
+        break;
+
+      case LOG_IN_FAILURE:
+        draft.isLoggedIn = false;
+        draft.isLoggingIn = false;
+
+      case LOG_OUT_REQUEST:
+        draft.isLoggedOut = false;
+        draft.isLoggingOut = true; //requesting...
+        draft.logoutError = null;
+        draft.me = null;
+        break;
+
+      case LOG_OUT_SUCCESS:
+        draft.isLoggedOut = false;
+        draft.isLoggingOut = false;
+        draft.me = null;
+        break;
+
+      case LOG_OUT_FAILURE:
+        draft.isLoggingOut = false;
+        draft.logoutError = action.error;
+        break;
+
+      case SIGNUP_REQUEST:
+        draft.isSignedUp = false;
+        draft.isSigningUp = true; //requesting...
+        draft.signupError = null;
+        break;
+      case SIGNUP_SUCCESS:
+        draft.isSignedUp = false;
+        draft.isSigningUp = false;
+        break;
+
+      case SIGNUP_FAILURE:
+        draft.isSigningUp = false;
+        draft.signupError = action.error;
+        break;
+
+      case ADD_POST_TO_ME:
+        draft.me.Posts.unshift({ id: action.data });
+        break;
+
+      case REMOVE_POST_TO_ME:
+        // return {
+        //   ...state,
+        //   me: {
+        //     //지우는건 필터링으로!
+        //     ...state.me,
+        //     Posts: state.me.Posts.filter((v) => v.id !== action.data),
+        //   },
+        // };
+        draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+        break;
+
+      default:
+        break;
+    }
+  });
 };
 export default reducer;

@@ -1,5 +1,6 @@
 import shortId from "shortid";
 import produce from "immer";
+import faker, { fake } from "faker";
 
 export const initialState = {
   mainPosts: [
@@ -8,34 +9,6 @@ export const initialState = {
       id: shortId.generate(),
       User: { id: 1, nickname: "인아" },
       content: "히히",
-      Images: [
-        { id: shortId.generate(), src: "https://dummyimage.com/300" },
-        { id: shortId.generate(), src: "https://dummyimage.com/300" },
-        { id: shortId.generate(), src: "https://dummyimage.com/300" },
-      ],
-      Comments: [
-        {
-          id: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: "nero",
-          },
-          content: "#리액트 #쉬워요",
-        },
-        {
-          id: shortId.generate(),
-          User: {
-            id: shortId.generate(),
-            nickname: "hero",
-          },
-          content: "호호호",
-        },
-      ],
-    },
-    {
-      id: shortId.generate(),
-      User: { id: shortId.generate(), nickname: "인아" },
-      content: "#리액트 #쉬워요",
       Images: [
         { id: shortId.generate(), src: "https://dummyimage.com/300" },
         { id: shortId.generate(), src: "https://dummyimage.com/300" },
@@ -72,6 +45,38 @@ export const initialState = {
   isPostRemoved: false,
   postRemoveError: null,
 };
+
+//더미데이터 추가하기
+initialState.mainPosts = initialState.mainPosts.concat(
+  Array(20)
+    .fill()
+    .map(() => ({
+      id: shortId.generate(),
+      User: {
+        id: shortId.generate(),
+        nickname: faker.name.findName(),
+      },
+      content: faker.lorem.paragraph(),
+      Images: [
+        {
+          src: faker.image.image(),
+        },
+        {
+          src: faker.image.image(),
+        },
+      ],
+      Comments: [
+        {
+          id: shortId.generate(),
+          User: {
+            id: shortId.generate(),
+            nickname: faker.name.findName(),
+          },
+          content: faker.lorem.sentence(),
+        },
+      ],
+    }))
+);
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
